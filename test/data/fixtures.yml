@@ -1,0 +1,75 @@
+fixtures:
+  - model: user
+    data:
+      id: 1
+      email: user1@gmail.com
+      password: user1user1
+      isAdmin: true
+  - model: user
+    data:
+      id: 2
+      email: user2@gmail.com
+      password: user2user2
+  - model: user
+    data:
+      id: 3
+      email: user3@gmail.com
+      password: user3user3
+  - model: todo
+    data:
+      id: 1
+      text: User has to be great
+      completed: true
+      owner: 1
+  - model: todo
+    data:
+      id: 2
+      text: Regular plane has a great wing
+      completed: false
+      owner: 2
+  - model: todo
+    data:
+      id: 3
+      text: My boat has to be very clean before meeting some girl
+      completed: false
+      owner: 1
+      assignees: [3]
+  - model: todo
+    data:
+      id: 4
+      text: Act like everyone in public
+      completed: true
+      owner: 3
+  - model: todo
+    data:
+      id: 5
+      text: Just be your self with your soulmate
+      completed: true
+      owner: 3
+      assignees: [1, 2]
+  - model: todo
+    data:
+      id: 6
+      text: Everything will be all right
+      completed: false
+      owner: 1
+  - model: todoNote
+    data:
+      id: 1
+      text: I found some bug to fix aon it
+      todo: 1
+  - model: todoNote
+    data:
+      id: 2
+      text: All right, just tell me
+      todo: 1
+  - model: todoNote
+    data:
+      id: 3
+      text: You have to fix connection, not working right way
+      todo: 2
+  - model: todoNote
+    data:
+      id: 4
+      text: Hello word
+      todo: 6
