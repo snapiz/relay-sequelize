@@ -71,18 +71,13 @@ let TodoNote = sequelize.define('todoNote', {
   }
 });
 
-let TodoAssignee = sequelize.define('todoAssignee', {
-  primary: {
-    type: Sequelize.BOOLEAN
-  }
-}, {
-    graphql: false
-  });
+let TodoAssignee = sequelize.define('todoAssignee');
 
 User.hasMany(Todo, {
   as: 'todos',
   foreignKey: 'userId'
 });
+
 User.belongsToMany(Todo, {
   as: 'assignedTodos',
   through: TodoAssignee

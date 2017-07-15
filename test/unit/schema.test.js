@@ -6,7 +6,7 @@ describe('#createSequelizeGraphql()', function () {
   const { queries, mutations, nodeTypeMapper } = createSequelizeGraphql(sequelize);
   describe('nodeMapper', function() {
     it('should have 4 node types', function(){
-      expect(Object.keys(nodeTypeMapper.map)).to.lengthOf(3);
+      expect(Object.keys(nodeTypeMapper.map)).to.lengthOf(4);
     });
   });
   describe('user', function () {
