@@ -1,7 +1,7 @@
 {
   "name": "relay-sequelize",
   "version": "1.0.0",
-  "description": "A graphql schema (types, queries, mutations) generator sequelize to relay.",
+  "description": "A graphql schema generator for relay.",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",
