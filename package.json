@@ -8,7 +8,7 @@
     "build": "babel src -d lib",
     "test": "mocha --recursive --compilers js:babel-register"
   },
-  "author": "",
+  "author": "Jonathan Lapiquonne <jonathan.lapiquonne@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.24.1",
