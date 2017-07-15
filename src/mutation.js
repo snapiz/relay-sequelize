@@ -45,7 +45,7 @@ export function createCreateMutation(model, graphqlType) {
       exclude: exclude
     }),
     outputFields: {
-      [graphqlType.name]: {
+      [camelCase(graphqlType.name)]: {
         type: graphqlType,
         resolve: function ({ dataValues }) {
           return { node: dataValues, cursor: toCursor(dataValues) };
@@ -86,7 +86,7 @@ export function createUpdateMutation(model, graphqlType) {
       exclude: exclude
     })),
     outputFields: {
-      [graphqlType.name]: {
+      [camelCase(graphqlType.name)]: {
         type: graphqlType,
         resolve: function ({ dataValues }) {
           return dataValues ? { node: dataValues, cursor: toCursor(dataValues) } : null;
@@ -125,7 +125,7 @@ export function createDeleteMutation(model, graphqlType) {
       id: { type: new GraphQLNonNull(GraphQLString) }
     },
     outputFields: {
-      [graphqlType.name]: {
+      [camelCase(graphqlType.name)]: {
         type: graphqlType,
         resolve: function ({ dataValues }) {
           return dataValues ? { node: dataValues, cursor: toCursor(dataValues) } : null;
