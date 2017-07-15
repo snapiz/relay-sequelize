@@ -8,6 +8,22 @@
     "build": "babel src -d lib",
     "test": "mocha --recursive --compilers js:babel-register"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/snapiz/relay-sequelize.git"
+  },
+  "keywords": [
+    "node",
+    "start",
+    "kit",
+    "babel",
+    "mocha",
+    "test"
+  ],
+  "bugs": {
+    "url": "https://github.com/snapiz/relay-sequelize/issues"
+  },
+  "homepage": "https://github.com/snapiz/relay-sequelize#readme",
   "author": "Jonathan Lapiquonne <jonathan.lapiquonne@gmail.com>",
   "license": "MIT",
   "devDependencies": {
