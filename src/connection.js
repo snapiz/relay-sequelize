@@ -13,9 +13,9 @@ import {
 } from "graphql-relay";
 
 import {
-  base64,
-  unbase64
-} from "../utils/base64";
+  toCursor,
+  fromCursor
+} from "./utils/cursor";
 
 import { capitalize } from "lodash";
 
@@ -26,14 +26,6 @@ export function createBelongToConnection(association, graphQLObjectType) {
       separate: true
     })
   };
-}
-
-function toCursor(item) {
-  return base64(String(new Date(item.get("createdAt")).getTime()));
-}
-
-function fromCursor(cursor) {
-  return cursor ? unbase64(cursor) : undefined;
 }
 
 function resolve(target, source, args, context, info) {

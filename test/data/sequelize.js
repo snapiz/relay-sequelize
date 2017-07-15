@@ -9,7 +9,10 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 let User = sequelize.define('user', {
   email: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      isEmail: true
+    }
   },
   password: {
     type: Sequelize.STRING,
@@ -17,21 +20,28 @@ let User = sequelize.define('user', {
   },
   isAdmin: {
     type: Sequelize.BOOLEAN,
-    allowNull: false,
     defaultValue: false
   }
 }, {
     graphql: {
-      before: function (obj, args, context, info) {
-
+      before: function (args, context, info) {
+        const { isAdmin } = context.user;
+        if (!isAdmin) {
+          throw new Error("You are not allow to perform this action");
+        }
       },
       find: {
         exclude: ['password'],
-        before: function (obj, args, context, info) {
-          const { isAllowFind } = context;
-          /* if (isAllowFind !== undefined && !isAllowFind) {
-            throw new Error()
-          } */
+        before: function (args, context, info) {
+          const { isAllowFind } = context.user;
+          if (isAllowFind !== undefined && !isAllowFind) {
+            throw new Error("You are not allow to perform this action");
+          }
+        }
+      },
+      create: {
+        before: function (args, context, info) {
+          args.email = "tr_" + args.email;
         }
       }
     }
@@ -65,7 +75,9 @@ let TodoAssignee = sequelize.define('todoAssignee', {
   primary: {
     type: Sequelize.BOOLEAN
   }
-});
+}, {
+    graphql: false
+  });
 
 User.hasMany(Todo, {
   as: 'todos',

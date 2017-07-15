@@ -4,6 +4,7 @@ import {
 
 import {
   GraphQLObjectType,
+  GraphQLString,
 } from "graphql";
 
 const {
@@ -13,15 +14,16 @@ const {
 import {
   createBelongToConnection,
   createHasManyConnections
-} from "../connection";
+} from "./connection";
 
 export const sequelizeGraphQLObjectTypes = {};
+export const graphqlEdgeTypes = {};
 
 export function toGraphQLObjectType(model, nodeInterface) {
   const { name, associations, options: { graphql } } = model;
 
   if (sequelizeGraphQLObjectTypes[name] !== undefined) {
-    return sequelizeGraphQLObjectTypes[name];
+    return [sequelizeGraphQLObjectTypes[name], graphqlEdgeTypes[name]];
   }
 
   const { find: { exclude } } = merge({
@@ -42,9 +44,17 @@ export function toGraphQLObjectType(model, nodeInterface) {
     interfaces: [nodeInterface]
   });
 
+  graphqlEdgeTypes[name] = new GraphQLObjectType({
+    name: `${name}Edge`,
+    fields: {
+      cursor: { type: GraphQLString },
+      node: { type: sequelizeGraphQLObjectTypes[name] }
+    }
+  });
+
   Object.keys(associations).reduce(function (obj, associationName) {
     const association = associations[associationName];
-    const graphQLObjectType = toGraphQLObjectType(association.target, nodeInterface);
+    const [graphQLObjectType] = toGraphQLObjectType(association.target, nodeInterface);
 
     fields[associationName] =
       association.associationType === "BelongsTo"
@@ -54,5 +64,5 @@ export function toGraphQLObjectType(model, nodeInterface) {
     return fields;
   }, fields);
 
-  return sequelizeGraphQLObjectTypes[name];
+  return [sequelizeGraphQLObjectTypes[name], graphqlEdgeTypes[name]];
 }

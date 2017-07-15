@@ -6,7 +6,7 @@ describe('#createSequelizeGraphql()', function () {
   const { queries, mutations, nodeTypeMapper } = createSequelizeGraphql(sequelize);
   describe('nodeMapper', function() {
     it('should have 4 node types', function(){
-      expect(Object.keys(nodeTypeMapper.map)).to.lengthOf(4);
+      expect(Object.keys(nodeTypeMapper.map)).to.lengthOf(3);
     });
   });
   describe('user', function () {
@@ -118,35 +118,6 @@ describe('#createSequelizeGraphql()', function () {
     });
     it('delete mutation should be defined', function () {
       expect(mutations.deleteTodoNote).to.not.be.undefined;
-    });
-  });
-  describe('todoAssignee', function () {
-    it('type should be defined', function () {
-      expect(sequelizeGraphQLObjectTypes.todoAssignee).to.not.be.undefined;
-    });
-    it('type should have fields', function () {
-      expect(sequelizeGraphQLObjectTypes.todoAssignee._typeConfig.fields).to.not.be.undefined;
-    });
-    it('type should have id', function () {
-      expect(sequelizeGraphQLObjectTypes.todoAssignee._typeConfig.fields.id).to.not.be.undefined;
-    });
-    it('type should have primary', function () {
-      expect(sequelizeGraphQLObjectTypes.todoAssignee._typeConfig.fields.primary).to.not.be.undefined;
-    });
-    it('find query should be defined', function () {
-      expect(queries.todoAssignee).to.not.be.undefined;
-    });
-    it('findAll query should be defined', function () {
-      expect(queries.todoAssignees).to.not.be.undefined;
-    });
-    it('create mutation should be defined', function () {
-      expect(mutations.createTodoAssignee).to.not.be.undefined;
-    });
-    it('update mutation should be defined', function () {
-      expect(mutations.updateTodoAssignee).to.not.be.undefined;
-    });
-    it('delete mutation should be defined', function () {
-      expect(mutations.deleteTodoAssignee).to.not.be.undefined;
     });
   });
 });

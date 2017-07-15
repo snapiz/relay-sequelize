@@ -50,9 +50,12 @@ export function createSequelizeGraphql(sequelize) {
     nodeTypeMapper
   } = sequelizeNodeInterface(sequelize);
 
-  return Object.keys(sequelize.models).reduce(function (obj, name) {
+  return Object.keys(sequelize.models).filter(function(name){
+    return sequelize.models[name].options.graphql !== false;
+  }).reduce(function (obj, name) {
     const model = sequelize.models[name];
-    const gType = toGraphQLObjectType(model, nodeInterface);
+    const { graphql } = model.options;
+    const [gType, edgeType] = toGraphQLObjectType(model, nodeInterface);
     const queryName = camelCase(name);
     const mutationName = upperFirst(queryName);
 
@@ -63,6 +66,12 @@ export function createSequelizeGraphql(sequelize) {
         if (args.id) {
           args.id = parseInt(fromGlobalId(args.id).id, 10);
         }
+        if (graphql && graphql.before) {
+          graphql.before(args, context, info);
+        }
+        if (graphql && graphql.find && graphql.find.before) {
+          graphql.find.before(args, context, info);
+        }
         return resolver(model)(obj, args, context, info);
       }
     };
@@ -70,12 +79,20 @@ export function createSequelizeGraphql(sequelize) {
     obj.queries[`${queryName}s`] = {
       type: new GraphQLList(gType),
       args: defaultListArgs(),
-      resolve: resolver(model)
+      resolve: function (obj, args, context, info) {
+        if (graphql && graphql.before) {
+          graphql.before(args, context, info);
+        }
+        if (graphql && graphql.find && graphql.find.before) {
+          graphql.find.before(args, context, info);
+        }
+        return resolver(model)(obj, args, context, info);
+      }
     };
 
-    mutationNames.reduce(function(mobj, mname) {
-      mobj[mname + mutationName] = mutations[`create${upperFirst(mname)}Mutation`](model, gType);
-      
+    mutationNames.reduce(function (mobj, mname) {
+      mobj[mname + mutationName] = mutations[`create${upperFirst(mname)}Mutation`](model, edgeType);
+
       return mobj;
     }, obj.mutations);
 

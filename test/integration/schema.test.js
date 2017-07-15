@@ -57,8 +57,8 @@ describe('#createSequelizeGraphql()', function () {
         })
     });
   });
-  describe('user', function () {
-    it('should find, create, update and delete', function () {
+  describe('query', function () {
+    it('should find on user', function () {
       return graphql(schema, `
         query {
           users {
@@ -68,10 +68,12 @@ describe('#createSequelizeGraphql()', function () {
         }
       `, {}, { user: { isAdmin: true, isAllowFind: true } }).then(function (result) {
           expect(result).to.not.undefined;
+          expect(result.errors).to.undefined;
+          expect(result.data.users).to.not.null;
           return true;
         })
     });
-    it('should not perform find request, but can create, update and delete', function () {
+    it('should not allow to find on user', function () {
       return graphql(schema, `
         query {
           users {
@@ -80,11 +82,13 @@ describe('#createSequelizeGraphql()', function () {
           }
         }
       `, {}, { user: { isAdmin: true, isAllowFind: false } }).then(function (result) {
-          expect(result).to.undefined;
+          expect(result).to.not.undefined;
+          expect(result.errors).to.not.undefined;
+          expect(result.errors[0].message).to.be.equal('You are not allow to perform this action');
           return true;
         })
     });
-    it('should not be read', function () {
+    it('should not allow to find on user as not admin', function () {
       return graphql(schema, `
         query {
           users {
@@ -93,9 +97,123 @@ describe('#createSequelizeGraphql()', function () {
           }
         }
       `, {}, { user: { isAdmin: false } }).then(function (result) {
-          expect(result).to.undefined;
+          expect(result).to.not.undefined;
+          expect(result.errors).to.not.undefined;
+          expect(result.errors[0].message).to.be.equal('You are not allow to perform this action');
           return true;
         })
+    });
+
+    it('should successfully create, update and delete an user', function () {
+      const createUserMutation = `
+        mutation createUserTest($input: createUserInput!) {
+          createUser(input: $input) {
+            userEdge {
+              cursor
+              node {
+                id
+                email
+              }
+            }
+          }
+        }
+      `;
+      const createUserVariables = {
+        "input": {
+          "email": `user4@gmail.com`,
+          "password": `user4user4`,
+          "clientMutationId": "test"
+        }
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, createUserMutation, {}, cxt, createUserVariables).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.errors).to.undefined;
+        expect(result.data.createUser.userEdge.node.email).to.be.equals('tr_user4@gmail.com');
+        const updateUserMutation = `
+          mutation updateUserTest($input: updateUserInput!) {
+            updateUser(input: $input) {
+              userEdge {
+                cursor
+                node {
+                  id
+                  email
+                }
+              }
+            }
+          }
+        `;
+        const updateUserVariables = {
+          "input": {
+            "id": result.data.createUser.userEdge.node.id /* "dXNlcjoxNQ==" */,
+            "email": `user4_updated@gmail.com`,
+            "password": `user4user4`,
+            "clientMutationId": "test"
+          }
+        };
+        return graphql(schema, updateUserMutation, {}, cxt, updateUserVariables);
+      }).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.errors).to.undefined;
+        expect(result.data.updateUser.userEdge.node.email).to.be.equals('user4_updated@gmail.com');
+        const deleteeUserMutation = `
+          mutation deleteUserTest($input: deleteUserInput!) {
+            deleteUser(input: $input) {
+              userEdge {
+                cursor
+                node {
+                  id
+                  email
+                }
+              }
+            }
+          }
+        `;
+        const deleteUserVariables = {
+          "input": {
+            "id": result.data.updateUser.userEdge.node.id,
+          }
+        };
+        return graphql(schema, deleteeUserMutation, {}, cxt, deleteUserVariables);
+      }).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.errors).to.undefined;
+        expect(result.data.deleteUser.userEdge.node.id).to.be.equals('dXNlcjo0');
+        expect(result.data.deleteUser.userEdge.node.email).to.be.equals('user4_updated@gmail.com');
+        return true;
+      })
+    });
+    it('should not allow to create an user', function () {
+      const createUserMutation = `
+        mutation createUserTest($input: createUserInput!) {
+          createUser(input: $input) {
+            userEdge {
+              cursor
+              node {
+                email
+              }
+            }
+          }
+        }
+      `;
+      const createUserVariables = {
+        "input": {
+          "email": `user4@gmail.com`,
+          "password": `user4user4`,
+          "clientMutationId": "test"
+        }
+      };
+      const cxt = {
+        user: { isAdmin: false }
+      };
+      return graphql(schema, createUserMutation, {}, cxt, createUserVariables).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.errors).to.not.undefined;
+        expect(result.errors[0].message).to.be.equal('You are not allow to perform this action');
+        return true;
+      })
     });
   });
 }); 
