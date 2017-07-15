@@ -13,12 +13,10 @@
     "url": "git+ssh://git@github.com/snapiz/relay-sequelize.git"
   },
   "keywords": [
-    "node",
-    "start",
-    "kit",
-    "babel",
-    "mocha",
-    "test"
+    "relay",
+    "graphql",
+    "generator",
+    "sequelize"
   ],
   "bugs": {
     "url": "https://github.com/snapiz/relay-sequelize/issues"
