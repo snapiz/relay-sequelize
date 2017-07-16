@@ -1,5 +1,4 @@
 import {
-  mutationWithClientMutationId,
   fromGlobalId
 } from "graphql-relay";
 
@@ -37,7 +36,7 @@ export function createCreateMutation(model, graphqlType) {
 
   exclude.push('id', 'createdAt', 'updatedAt');
 
-  return mutationWithClientMutationId({
+  return {
     name: `create${upperFirst(model.name)}`,
     inputFields: attributeFields(model, {
       commentToDescription: true,
@@ -61,14 +60,14 @@ export function createCreateMutation(model, graphqlType) {
       }
       return model.create(args);
     },
-  });;
+  }
 }
 
 export function createUpdateMutation(model, graphqlType) {
   const {
       update: {
         exclude,
-        before
+    before
       }
     } = model.options.graphql = merge({
       update: {
@@ -78,7 +77,7 @@ export function createUpdateMutation(model, graphqlType) {
 
   exclude.push('id', 'createdAt', 'updatedAt');
 
-  return mutationWithClientMutationId({
+  return {
     name: `update${upperFirst(model.name)}`,
     inputFields: merge({ id: { type: new GraphQLNonNull(GraphQLString) } }, attributeFields(model, {
       commentToDescription: true,
@@ -98,16 +97,16 @@ export function createUpdateMutation(model, graphqlType) {
         if (!row) {
           return {};
         }
-         if (model.options.graphql && model.options.graphql.before) {
+        if (model.options.graphql && model.options.graphql.before) {
           model.options.graphql.before(args, context, info);
         }
         if (before) {
           before(row, args, context, info);
-        } 
+        }
         return row.update(args);
       });
     },
-  });;
+  }
 }
 
 export function createDeleteMutation(model, graphqlType) {
@@ -119,7 +118,7 @@ export function createDeleteMutation(model, graphqlType) {
       delete: {}
     }, model.options.graphql);
 
-  return mutationWithClientMutationId({
+  return {
     name: `delete${upperFirst(model.name)}`,
     inputFields: {
       id: { type: new GraphQLNonNull(GraphQLString) }
@@ -137,14 +136,14 @@ export function createDeleteMutation(model, graphqlType) {
         if (!row) {
           return {};
         }
-         if (model.options.graphql && model.options.graphql.before) {
+        if (model.options.graphql && model.options.graphql.before) {
           model.options.graphql.before(args, context, info);
         }
         if (before) {
           before(row, args, context, info);
-        } 
+        }
         return row ? row.destroy(args).then(() => row) : {};
       });
     },
-  });;
+  }
 }

@@ -9,6 +9,7 @@ export {
 } from "graphql-server-express";
 
 import {
+  mutationWithClientMutationId,
   fromGlobalId
 } from "graphql-relay";
 
@@ -50,7 +51,7 @@ export function createSequelizeGraphql(sequelize) {
     nodeTypeMapper
   } = sequelizeNodeInterface(sequelize);
 
-  return Object.keys(sequelize.models).filter(function(name){
+  return Object.keys(sequelize.models).filter(function (name) {
     return sequelize.models[name].options.graphql !== false;
   }).reduce(function (obj, name) {
     const model = sequelize.models[name];
@@ -111,7 +112,9 @@ export function createSequelizeGraphql(sequelize) {
 
 export function createSequelizeGraphqlSchema(sequelize, options = {}) {
   const { queries, mutations, nodeTypeMapper, nodeInterface } = createSequelizeGraphql(sequelize);
-
+  const _mutations = options.mutations
+    ? Object.assign({}, mutations, options.mutations(nodeInterface, attributeFields))
+    : mutations;
   return new GraphQLSchema({
     query: new GraphQLObjectType({
       name: 'RootType',
@@ -121,9 +124,10 @@ export function createSequelizeGraphqlSchema(sequelize, options = {}) {
     }),
     mutation: new GraphQLObjectType({
       name: 'Mutation',
-      fields: options.mutations
-        ? Object.assign({}, mutations, options.mutations(nodeInterface, attributeFields))
-        : mutations
+      fields: Object.keys(_mutations).reduce(function(data, current) {
+        data[current] = mutationWithClientMutationId(_mutations[current]);
+        return data;
+      }, {})
     })
   });
 }
