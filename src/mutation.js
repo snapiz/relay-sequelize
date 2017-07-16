@@ -35,7 +35,7 @@ export function createCreateMutation(model, graphqlType) {
       }
     }, model.options.graphql);
 
-  exclude.push('id', 'createdAt', 'updatedAt');
+  exclude.push('id', 'createdAt', 'updatedAt', 'created_at', 'updated_at');
 
   return mutationWithClientMutationId({
     name: `create${upperFirst(model.name)}`,
@@ -76,7 +76,7 @@ export function createUpdateMutation(model, graphqlType) {
       }
     }, model.options.graphql);
 
-  exclude.push('id', 'createdAt', 'updatedAt');
+  exclude.push('id', 'createdAt', 'updatedAt', 'created_at', 'updated_at');
 
   return mutationWithClientMutationId({
     name: `update${upperFirst(model.name)}`,
