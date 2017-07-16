@@ -1,6 +1,6 @@
 {
   "name": "relay-sequelize",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A graphql schema generator for relay.",
   "main": "lib/index.js",
   "scripts": {
