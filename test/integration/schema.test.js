@@ -20,7 +20,7 @@ describe('#createSequelizeGraphql()', function () {
     }
   });
   describe('viewer', function () {
-    it('should not be null', function () {
+    it('should found first of 2 users', function () {
       return graphql(schema, `
         query {
           viewer {
@@ -29,6 +29,7 @@ describe('#createSequelizeGraphql()', function () {
             todos(first: 2) {
               total
               edges {
+                cursor
                 node {
                   id
                   text
@@ -104,7 +105,7 @@ describe('#createSequelizeGraphql()', function () {
         })
     });
 
-    it('should successfully create, update and delete an user', function () {
+    it('should successfully create an user', function () {
       const createUserMutation = `
         mutation createUserTest($input: createUserInput!) {
           createUser(input: $input) {
@@ -132,7 +133,12 @@ describe('#createSequelizeGraphql()', function () {
         expect(result).to.not.undefined;
         expect(result.errors).to.undefined;
         expect(result.data.createUser.userEdge.node.email).to.be.equals('tr_user4@gmail.com');
-        const updateUserMutation = `
+
+        return true;
+      });
+    });
+    it('should successfully update an user', function () {
+      const updateUserMutation = `
           mutation updateUserTest($input: updateUserInput!) {
             updateUser(input: $input) {
               userEdge {
@@ -145,20 +151,26 @@ describe('#createSequelizeGraphql()', function () {
             }
           }
         `;
-        const updateUserVariables = {
-          "input": {
-            "id": result.data.createUser.userEdge.node.id /* "dXNlcjoxNQ==" */,
-            "email": `user4_updated@gmail.com`,
-            "password": `user4user4`,
-            "clientMutationId": "test"
-          }
-        };
-        return graphql(schema, updateUserMutation, {}, cxt, updateUserVariables);
-      }).then(function (result) {
+      const updateUserVariables = {
+        "input": {
+          "id": "dXNlcjox",
+          "email": `user4_updated@gmail.com`,
+          "password": `user4user4`,
+          "clientMutationId": "test"
+        }
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, updateUserMutation, {}, cxt, updateUserVariables).then(function (result) {
         expect(result).to.not.undefined;
         expect(result.errors).to.undefined;
         expect(result.data.updateUser.userEdge.node.email).to.be.equals('user4_updated@gmail.com');
-        const deleteeUserMutation = `
+        return true;
+      })
+    });
+    it('should successfully delete an user', function () {
+      const deleteeUserMutation = `
           mutation deleteUserTest($input: deleteUserInput!) {
             deleteUser(input: $input) {
               userEdge {
@@ -171,17 +183,20 @@ describe('#createSequelizeGraphql()', function () {
             }
           }
         `;
-        const deleteUserVariables = {
-          "input": {
-            "id": result.data.updateUser.userEdge.node.id,
-          }
-        };
-        return graphql(schema, deleteeUserMutation, {}, cxt, deleteUserVariables);
-      }).then(function (result) {
+      const deleteUserVariables = {
+        "input": {
+          "id": "dXNlcjox",
+        }
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, deleteeUserMutation, {}, cxt, deleteUserVariables).then(function (result) {
         expect(result).to.not.undefined;
         expect(result.errors).to.undefined;
-        expect(result.data.deleteUser.userEdge.node.id).to.be.equals('dXNlcjo0');
+        expect(result.data.deleteUser.userEdge.node.id).to.be.equals('dXNlcjox');
         expect(result.data.deleteUser.userEdge.node.email).to.be.equals('user4_updated@gmail.com');
+
         return true;
       })
     });

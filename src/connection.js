@@ -29,20 +29,27 @@ export function createBelongToConnection(association, graphQLObjectType) {
 }
 
 function resolve(target, source, args, context, info) {
+  const createdAtField = target.rawAttributes.createdAt || target.rawAttributes.created_at; 
+  if(!createdAtField) {
+    throw new Error("cannot found createdAt field");
+  }
   const { after, before, first, last } = args;
   const cursor = fromCursor(after || before);
-  const orderByAttribute = "createdAt";
   const orderByDirection = last ? "DESC" : "ASC";
 
   let options = {
-    order: [[orderByAttribute, orderByDirection]],
+    order: [[createdAtField.field, orderByDirection]],
     limit: first || last
   };
 
   if (cursor) {
-    const operator = before ? '$lt' : '$gt';
+    let operator = before ? '$lt' : '$gt';
+    console.log(operator, after || before, cursor)
+    /* if(last) {
+      operator = after ? '$lt' : '$gt';
+    } */
     options.where = {
-      "createdAt": { [operator]: Number(cursor) }
+      [createdAtField.field]: { [operator]: Number(cursor) }
     };
   }
   const fnTargetname = capitalize(target.name);
@@ -64,7 +71,7 @@ function resolve(target, source, args, context, info) {
 
     const prevOptions = Object.assign({}, options, {
       where: {
-        "createdAt": {
+        [createdAtField.field]: {
           $lt: Number(fromCursor(result.pageInfo.startCursor))
         }
       }
@@ -72,7 +79,7 @@ function resolve(target, source, args, context, info) {
 
     const nextOptions = Object.assign({}, options, {
       where: {
-        "createdAt": {
+        [createdAtField.field]: {
           $gt: Number(fromCursor(result.pageInfo.endCursor))
         }
       }

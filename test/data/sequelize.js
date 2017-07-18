@@ -23,6 +23,7 @@ let User = sequelize.define('user', {
     defaultValue: false
   }
 }, {
+    underscored: true,
     graphql: {
       before: function (args, context, info) {
         const { isAdmin } = context.user;
@@ -57,6 +58,7 @@ let Todo = sequelize.define('todo', {
     allowNull: false
   }
 }, {
+    underscored: true,
     graphql: {
       orderBy: {
         TEXT: { value: ['text', 'DESC'] },
