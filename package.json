@@ -22,7 +22,7 @@
     "url": "https://github.com/snapiz/relay-sequelize/issues"
   },
   "homepage": "https://github.com/snapiz/relay-sequelize#readme",
-  "author": "Jonathan Lapiquonne <jonathan.lapiquonne@gmail.com>",
+  "author": "snapiz",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.24.1",
