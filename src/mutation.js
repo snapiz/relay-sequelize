@@ -49,8 +49,8 @@ export function createCreateMutation(model, graphqlType) {
     outputFields: {
       [camelCase(graphqlType.name)]: {
         type: graphqlType,
-        resolve: function ({ dataValues }) {
-          return { node: dataValues, cursor: toCursor(dataValues) };
+        resolve: function (source) {
+          return { node: source, cursor: toCursor(source) };
         },
       }
     },
@@ -98,8 +98,8 @@ export function createUpdateMutation(model, graphqlType) {
     outputFields: {
       [camelCase(graphqlType.name)]: {
         type: graphqlType,
-        resolve: function ({ dataValues }) {
-          return dataValues ? { node: dataValues, cursor: toCursor(dataValues) } : null;
+        resolve: function (source) {
+          return source ? { node: source, cursor: toCursor(source) } : null;
         },
       }
     },
@@ -140,8 +140,8 @@ export function createDeleteMutation(model, graphqlType) {
     outputFields: {
       [camelCase(graphqlType.name)]: {
         type: graphqlType,
-        resolve: function ({ dataValues }) {
-          return dataValues ? { node: dataValues, cursor: toCursor(dataValues) } : null;
+        resolve: function (source) {
+          return source ? { node: source, cursor: toCursor(source) } : null;
         },
       }
     },

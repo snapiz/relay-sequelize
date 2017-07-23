@@ -44,10 +44,6 @@ function resolve(target, source, args, context, info) {
 
   if (cursor) {
     let operator = before ? '$lt' : '$gt';
-    console.log(operator, after || before, cursor)
-    /* if(last) {
-      operator = after ? '$lt' : '$gt';
-    } */
     options.where = {
       [createdAtField.field]: { [operator]: Number(cursor) }
     };
