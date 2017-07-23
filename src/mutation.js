@@ -63,7 +63,7 @@ export function createCreateMutation(model, graphqlType) {
       }
       return model.create(args).then(function (result) {
         if (after) {
-          after(result, args, context, info);
+          after(args, context, info, result);
         }
         return result;
       });
@@ -112,12 +112,12 @@ export function createUpdateMutation(model, graphqlType) {
           model.options.graphql.before(args, context, info);
         }
         if (before) {
-          before(row, args, context, info);
+          before(args, context, info, row);
         }
         return row.update(args);
       }).then(function (result) {
         if (after) {
-          after(result, args, context, info);
+          after(args, context, info, result);
         }
         return result;
       });
@@ -154,11 +154,11 @@ export function createDeleteMutation(model, graphqlType) {
           model.options.graphql.before(args, context, info);
         }
         if (before) {
-          before(row, args, context, info);
+          before(args, context, info, row);
         }
         return row ? row.destroy(args).then(() => {
           if (after) {
-            after(row, args, context, info);
+            after(args, context, info, row);
           }
           return row;
         }) : {};
