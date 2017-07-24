@@ -42,6 +42,12 @@ export {
   sequelizeGraphQLObjectTypes
 } from "./type";
 
+
+import {
+  argsToSequelize,
+  resolveEdge
+} from "./utils/graphql";
+
 export const mutationNames = ["create", "update", "delete"];
 
 export function createSequelizeGraphql(sequelize) {
@@ -61,19 +67,19 @@ export function createSequelizeGraphql(sequelize) {
     const mutationName = upperFirst(queryName);
 
     obj.queries[queryName] = {
-      type: gType,
+      type: edgeType,
       args: merge(defaultArgs(model), { id: { type: GraphQLString } }),
       resolve: function (obj, args, context, info) {
-        if (args.id) {
-          args.id = parseInt(fromGlobalId(args.id).id, 10);
-        }
+        args = argsToSequelize(model, args);
         if (graphql && graphql.before) {
           graphql.before(args, context, info);
         }
         if (graphql && graphql.find && graphql.find.before) {
           graphql.find.before(args, context, info);
         }
-        return resolver(model)(obj, args, context, info);
+        return resolver(model)(obj, args, context, info).then(function (source) {
+          return resolveEdge(source);
+        });
       }
     };
 
@@ -124,7 +130,7 @@ export function createSequelizeGraphqlSchema(sequelize, options = {}) {
     }),
     mutation: new GraphQLObjectType({
       name: 'Mutation',
-      fields: Object.keys(_mutations).reduce(function(data, current) {
+      fields: Object.keys(_mutations).reduce(function (data, current) {
         data[current] = mutationWithClientMutationId(_mutations[current]);
         return data;
       }, {})

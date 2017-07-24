@@ -230,5 +230,63 @@ describe('#createSequelizeGraphql()', function () {
         return true;
       })
     });
+    it('should create an todoAssignee', function () {
+      const createUserMutation = `
+        mutation createTodoAssigneeest($input: createTodoAssigneeInput!) {
+          createTodoAssignee(input: $input) {
+            todoAssigneeEdge {
+              cursor
+              node {
+                id
+              }
+            }
+          }
+        }
+      `;
+      const createUserVariables = {
+        "input": {
+          "user_id": base64("user:3"),
+          "todo_id": base64("todo:6"),
+          "clientMutationId": "test"
+        }
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, createUserMutation, {}, cxt, createUserVariables).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.errors).to.undefined;
+        expect(result.data.createTodoAssignee).to.not.undefined;
+
+        return true;
+      })
+    });
+    it('should query one user', function () {
+      const createUserMutation = `
+        query queryUser($id: String!) {
+          user(id: $id) {
+            node {
+              id,
+              email
+            }
+          }
+        }
+      `;
+      const createUserVariables = {
+        "id": base64("user:2")
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, createUserMutation, {}, cxt, createUserVariables).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.errors).to.undefined;
+        expect(result.data.user).to.not.undefined;
+        const { email } = result.data.user.node;
+        expect(email).to.be.eq("user2@gmail.com");
+        
+        return true;
+      })
+    });
   });
 }); 
