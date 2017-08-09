@@ -39,7 +39,7 @@ export function createCreateMutation(model, graphqlType) {
 
   return {
     name: `create${upperFirst(model.name)}`,
-    inputFields: merge(parsePrimaryKeyinputFields(model, { exclude: ["id"] }), attributeFields(model, {
+    inputFields: merge(parsePrimaryKeyinputFields(model, { exclude: ["id"].concat(exclude) }), attributeFields(model, {
       commentToDescription: true,
       globalId: false,
       exclude: defaultExcludeFields(model, exclude)
@@ -81,7 +81,7 @@ export function createUpdateMutation(model, graphqlType) {
 
   return {
     name: `update${upperFirst(model.name)}`,
-    inputFields: merge(parsePrimaryKeyinputFields(model), attributeFields(model, {
+    inputFields: merge(parsePrimaryKeyinputFields(model, {exclude}), attributeFields(model, {
       commentToDescription: true,
       globalId: false,
       exclude: defaultExcludeFields(model, exclude)
