@@ -169,6 +169,40 @@ describe('#createSequelizeGraphql()', function () {
         return true;
       })
     });
+    it('should not found user when trying to update an user', function () {
+      const updateUserMutation = `
+          mutation updateUserTest($input: updateUserInput!) {
+            updateUser(input: $input) {
+              userEdge {
+                cursor
+                node {
+                  id
+                  email
+                }
+              }
+            }
+          }
+        `;
+      const updateUserVariables = {
+        "input": {
+          "id": base64('user:125'),
+          "email": `user4_updated@gmail.com`,
+          "password": `user4user4`,
+          "clientMutationId": "test"
+        }
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, updateUserMutation, {}, cxt, updateUserVariables).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.data).to.not.undefined;
+        expect(result.data.updateUser).to.be.null;
+        expect(result.errors).to.not.undefined;
+        expect(result.errors[0].message).to.equals('user not found');
+        return true;
+      })
+    });
     it('should successfully delete an user', function () {
       const deleteeUserMutation = `
           mutation deleteUserTest($input: deleteUserInput!) {
@@ -196,6 +230,38 @@ describe('#createSequelizeGraphql()', function () {
         expect(result.errors).to.undefined;
         expect(result.data.deleteUser.userEdge.node.id).to.be.equals('dXNlcjox');
         expect(result.data.deleteUser.userEdge.node.email).to.be.equals('user4_updated@gmail.com');
+
+        return true;
+      })
+    });
+    it('should not found user when trying to delete an user', function () {
+      const deleteeUserMutation = `
+          mutation deleteUserTest($input: deleteUserInput!) {
+            deleteUser(input: $input) {
+              userEdge {
+                cursor
+                node {
+                  id
+                  email
+                }
+              }
+            }
+          }
+        `;
+      const deleteUserVariables = {
+        "input": {
+          "id": base64('user:1247'),
+        }
+      };
+      const cxt = {
+        user: { isAdmin: true }
+      };
+      return graphql(schema, deleteeUserMutation, {}, cxt, deleteUserVariables).then(function (result) {
+        expect(result).to.not.undefined;
+        expect(result.data).to.not.undefined;
+        expect(result.data.deleteUser).to.be.null;
+        expect(result.errors).to.not.undefined;
+        expect(result.errors[0].message).to.equals('user not found');
 
         return true;
       })
@@ -284,7 +350,7 @@ describe('#createSequelizeGraphql()', function () {
         expect(result.data.user).to.not.undefined;
         const { email } = result.data.user.node;
         expect(email).to.be.eq("user2@gmail.com");
-        
+
         return true;
       })
     });

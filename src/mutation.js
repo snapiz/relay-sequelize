@@ -98,7 +98,7 @@ export function createUpdateMutation(model, graphqlType) {
       args = argsToSequelize(model, args);
       return model.findById(args.id).then(function (row) {
         if (!row) {
-          return {};
+          throw new Error(`${model.name} not found`);
         }
         if (model.options.graphql && model.options.graphql.before) {
           model.options.graphql.before(args, context, info);
@@ -141,7 +141,7 @@ export function createDeleteMutation(model, graphqlType) {
       args = argsToSequelize(model, args);
       return model.findById(args.id).then((row) => {
         if (!row) {
-          return {};
+          throw new Error(`${model.name} not found`);
         }
         if (model.options.graphql && model.options.graphql.before) {
           model.options.graphql.before(args, context, info);
