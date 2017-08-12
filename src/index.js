@@ -41,7 +41,8 @@ import {
 export * from "./utils";
 
 export {
-  sequelizeGraphQLObjectTypes
+  sequelizeGraphQLObjectTypes,
+  graphqlEdgeTypes
 } from "./type";
 
 export {
