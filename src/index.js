@@ -3,11 +3,6 @@ const {
   resolver, attributeFields
 } = require('graphql-sequelize');
 
-export {
-  graphqlExpress,
-  graphiqlExpress
-} from "graphql-server-express";
-
 import {
   mutationWithClientMutationId,
   fromGlobalId
@@ -38,15 +33,21 @@ import {
 
 import * as mutations from "./mutation";
 
+import {
+  argsToSequelize,
+  resolveEdge
+} from "./utils";
+
+export * from "./utils";
+
 export {
   sequelizeGraphQLObjectTypes
 } from "./type";
 
-
-import {
-  argsToSequelize,
-  resolveEdge
-} from "./utils/graphql";
+export {
+  graphqlExpress,
+  graphiqlExpress
+} from "graphql-server-express";
 
 export const mutationNames = ["create", "update", "delete"];
 

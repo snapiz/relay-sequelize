@@ -7,9 +7,9 @@ import {
   GraphQLString,
 } from "graphql";
 
-const {
+import {
   attributeFields
-} = require("graphql-sequelize");
+} from "graphql-sequelize";
 
 import {
   createBelongToConnection,

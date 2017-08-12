@@ -2,9 +2,9 @@ import {
   fromGlobalId
 } from "graphql-relay";
 
-const {
+import {
   attributeFields
-} = require('graphql-sequelize');
+} from "graphql-sequelize";
 
 import {
   upperFirst,
@@ -18,15 +18,12 @@ import {
 } from "graphql";
 
 import {
-  fromCursor,
-} from "./utils/cursor";
-
-import {
   defaultExcludeFields,
   parsePrimaryKeyinputFields,
   argsToSequelize,
-  resolveEdge
-} from "./utils/graphql";
+  resolveEdge,
+  fromCursor
+} from "./utils";
 
 export function createCreateMutation(model, graphqlType) {
   const {

@@ -15,7 +15,7 @@ import {
 import {
   toCursor,
   fromCursor
-} from "./utils/cursor";
+} from "./utils";
 
 import { capitalize } from "lodash";
 
