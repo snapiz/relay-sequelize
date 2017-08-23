@@ -16,26 +16,14 @@ Object.keys(_base).forEach(function (key) {
   });
 });
 
-var _cursor = require("./cursor");
+var _customizer = require("./customizer");
 
-Object.keys(_cursor).forEach(function (key) {
+Object.keys(_customizer).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
   Object.defineProperty(exports, key, {
     enumerable: true,
     get: function get() {
-      return _cursor[key];
-    }
-  });
-});
-
-var _graphql = require("./graphql");
-
-Object.keys(_graphql).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _graphql[key];
+      return _customizer[key];
     }
   });
 });

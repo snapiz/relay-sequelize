@@ -24,26 +24,24 @@ let User = sequelize.define('user', {
   }
 }, {
     underscored: true,
-    graphql: {
-      before: function (args, context, info) {
-        const { isAdmin } = context.user;
-        if (!isAdmin) {
+    before: function (source, args, context, info) {
+      const { isAdmin } = context.user;
+      if (!isAdmin) {
+        throw new Error("You are not allow to perform this action");
+      }
+    },
+    find: {
+      exclude: ['password'],
+      before: function (source, args, context, info) {
+        const { isAllowFind } = context.user;
+        if (isAllowFind !== undefined && !isAllowFind) {
           throw new Error("You are not allow to perform this action");
         }
-      },
-      find: {
-        exclude: ['password'],
-        before: function (args, context, info) {
-          const { isAllowFind } = context.user;
-          if (isAllowFind !== undefined && !isAllowFind) {
-            throw new Error("You are not allow to perform this action");
-          }
-        }
-      },
-      create: {
-        before: function (args, context, info) {
-          args.email = "tr_" + args.email;
-        }
+      }
+    },
+    create: {
+      before: function (source, args, context, info) {
+        args.email = "tr_" + args.email;
       }
     }
   });
@@ -58,12 +56,7 @@ let Todo = sequelize.define('todo', {
     allowNull: false
   }
 }, {
-    underscored: true,
-    graphql: {
-      orderBy: {
-        TEXT: { value: ['text', 'DESC'] },
-      }
-    }
+    underscored: true
   });
 
 let TodoNote = sequelize.define('todoNote', {
