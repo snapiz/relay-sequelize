@@ -5,7 +5,7 @@
   "description": "A graphql schema generator for relay.",
   "main": "index.js",
   "scripts": {
-    "build": " node ./scripts/clearDist.js && babel src -d dist",
+    "build": "node ./scripts/clearDist.js && babel src -d dist",
     "test": "mocha --recursive --compilers js:babel-register"
   },
   "repository": {
